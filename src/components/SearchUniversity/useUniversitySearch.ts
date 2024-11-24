@@ -1,6 +1,4 @@
-import { useState, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getUniversityRecommendations } from '../AiService';
+import { useState, useCallback, useEffect } from 'react';
 import { searchUniversities } from './api';
 import { University } from './types';
 
@@ -10,28 +8,32 @@ export function useUniversitySearch() {
   const [query, setQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [page, setPage] = useState(1);
+  const [results, setResults] = useState<University[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const {
-    data,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage
-  } = useQuery({
-    queryKey: ['universities', query, selectedFilters, page],
-    queryFn: async () => {
-      const aiRecommendations = query ? await getUniversityRecommendations(query, '') : null;
-      const searchResults = await searchUniversities({
-        query,
-        filters: selectedFilters,
-        page,
-        pageSize: PAGE_SIZE,
-        aiRecommendations
-      });
-      return searchResults;
-    },
-    keepPreviousData: true
-  });
+  const fetchResults = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await searchUniversities(query, selectedFilters, page, PAGE_SIZE);
+      
+      if (page === 1) {
+        setResults(data);
+      } else {
+        setResults(prev => [...prev, ...data]);
+      }
+      
+      setHasMore(data.length === PAGE_SIZE);
+    } catch (error) {
+      console.error('Error fetching results:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [query, selectedFilters, page]);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   const handleSearch = useCallback((searchQuery: string) => {
     setQuery(searchQuery);
@@ -49,20 +51,19 @@ export function useUniversitySearch() {
   }, []);
 
   const loadMore = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
+    if (!isLoading && hasMore) {
       setPage(prev => prev + 1);
-      fetchNextPage();
     }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [isLoading, hasMore]);
 
   return {
     query,
     setQuery: handleSearch,
     selectedFilters,
     toggleFilter,
-    results: data?.pages.flat() ?? [],
-    isLoading: isLoading || isFetchingNextPage,
-    hasMore: hasNextPage,
+    results,
+    isLoading,
+    hasMore,
     loadMore
   };
 }

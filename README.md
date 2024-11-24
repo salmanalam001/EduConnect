@@ -1,8 +1,8 @@
-# EduPath AI - Study Abroad Consultancy Platform
+# EduConnect - Study Abroad Consultancy Platform
 
-![EduPath AI](https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1200)
+![EduConnect](https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1200)
 
-EduPath AI is a modern, AI-powered platform designed to help students navigate their international education journey. Built with React, TypeScript, and Tailwind CSS, it offers personalized university recommendations and comprehensive study abroad guidance.
+EduConnect is a modern, AI-powered platform designed to help students navigate their international education journey. Built with React, TypeScript, and Tailwind CSS, it offers personalized university recommendations and comprehensive study abroad guidance.
 
 ## 🌟 Features
 
@@ -17,10 +17,10 @@ EduPath AI is a modern, AI-powered platform designed to help students navigate t
 
 ```bash
 # Clone the repository
-git clone https://github.com/codermillat/EduPath-AI.git
+git clone https://github.com/codermillat/EduConnect.git
 
 # Navigate to the project directory
-cd EduPath-AI
+cd EduConnect
 
 # Install dependencies
 npm install
@@ -48,7 +48,7 @@ npm run dev
 ## 🏗️ Project Structure
 
 ```
-edupath-ai/
+educonnect/
 ├── src/
 │   ├── components/
 │   │   ├── AiPreview.tsx        # AI recommendation component
@@ -128,7 +128,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Google Gemini AI for powering our recommendations
-- All contributors who have helped shape EduPath AI
+- All contributors who have helped shape EduConnect
 - The amazing open-source community
 - Universities and educational institutions for their support
 
@@ -136,7 +136,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support:
 - Email: contact@millat.tech
-- Join our [Discord community](https://discord.gg/edupathglobal)
+- Join our [Discord community](https://discord.gg/educonnect)
 - Create an issue on GitHub
 
 ---

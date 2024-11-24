@@ -2,14 +2,10 @@ export interface University {
   id: string;
   name: string;
   country: string;
+  domains: string[];
+  webPages: string[];
+  alphaTwoCode: string;
+  stateProvince: string | null;
   ranking: number;
-  programs: string[];
-  tuitionRange: string;
-  acceptance: string;
   image: string;
-  description?: string;
-  website?: string;
-  established?: number;
-  studentCount?: number;
-  internationalStudents?: string;
 }

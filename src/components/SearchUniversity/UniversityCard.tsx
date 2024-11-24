@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, GraduationCap, BookOpen, Image as ImageIcon } from 'lucide-react';
+import { MapPin, GraduationCap, Globe, Image as ImageIcon } from 'lucide-react';
 import { University } from './types';
 
 interface UniversityCardProps {
@@ -36,6 +36,9 @@ export default function UniversityCard({ university }: UniversityCardProps) {
               <div className="flex items-center mt-1 text-gray-600">
                 <MapPin className="h-4 w-4 mr-1" />
                 <span>{university.country}</span>
+                {university.stateProvince && (
+                  <span className="ml-1">- {university.stateProvince}</span>
+                )}
               </div>
             </div>
             <div className="flex items-center">
@@ -44,26 +47,33 @@ export default function UniversityCard({ university }: UniversityCardProps) {
             </div>
           </div>
 
-          <div className="mt-4">
-            <div className="flex items-center text-gray-600">
-              <BookOpen className="h-4 w-4 mr-1" />
-              <span className="text-sm">Popular Programs:</span>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {university.programs.slice(0, 3).map((program, idx) => (
-                <span
-                  key={idx}
-                  className="px-2 py-1 text-xs bg-indigo-50 text-indigo-600 rounded-full"
+          {university.webPages.length > 0 && (
+            <div className="mt-4">
+              <div className="flex items-center space-x-4">
+                <a
+                  href={university.webPages[0]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-indigo-600 hover:text-indigo-700"
                 >
-                  {program}
-                </span>
-              ))}
+                  <Globe className="h-4 w-4 mr-1" />
+                  <span className="text-sm">Visit Website</span>
+                </a>
+                {university.domains[0] && (
+                  <>
+                    <span className="text-gray-400">|</span>
+                    <span className="text-sm text-gray-600">{university.domains[0]}</span>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-            <span>Tuition: {university.tuitionRange}</span>
-            <span>Acceptance Rate: {university.acceptance}</span>
+            <span>Country Code: {university.alphaTwoCode}</span>
+            {university.stateProvince && (
+              <span>Region: {university.stateProvince}</span>
+            )}
           </div>
         </div>
       </div>
