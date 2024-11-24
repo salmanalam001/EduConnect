@@ -16,7 +16,7 @@ EduPath AI is a modern, AI-powered platform designed to help students navigate t
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/edupath-ai.git
+git clone https://github.com/codermillat/EduPath-AI.git
 
 # Navigate to the project directory
 cd edupath-ai
@@ -103,7 +103,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@edupathglobal.com or join our [Discord community](https://discord.gg/edupathglobal).
+For support, email contact@millat.tech or join our [Discord community](https://discord.gg/edupathglobal).
 
 ---
 
