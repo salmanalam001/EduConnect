@@ -14,20 +14,15 @@ export function useUniversitySearch() {
 
   const debouncedQuery = useDebounce(query, 300);
 
-  const fetchResults = useCallback(async () => {
-    if (!debouncedQuery && selectedFilters.length === 0 && page === 1) {
-      setResults([]);
-      setHasMore(false);
-      return;
-    }
-
+  const fetchResults = useCallback(async (resetPage: boolean = false) => {
     try {
       setIsLoading(true);
       setError(null);
       
-      const data = await searchUniversities(debouncedQuery, selectedFilters, page);
+      const currentPage = resetPage ? 1 : page;
+      const data = await searchUniversities(debouncedQuery, selectedFilters, currentPage);
       
-      if (page === 1) {
+      if (resetPage) {
         setResults(data);
       } else {
         setResults(prev => [...prev, ...data]);
@@ -44,13 +39,19 @@ export function useUniversitySearch() {
   }, [debouncedQuery, selectedFilters, page]);
 
   useEffect(() => {
-    fetchResults();
-  }, [fetchResults]);
+    setPage(1);
+    fetchResults(true);
+  }, [debouncedQuery, selectedFilters]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchResults(false);
+    }
+  }, [page]);
 
   const handleSearch = useCallback((searchQuery: string) => {
     setQuery(searchQuery);
     setPage(1);
-    setError(null);
   }, []);
 
   const handleFilterToggle = useCallback((filter: string) => {
@@ -58,16 +59,16 @@ export function useUniversitySearch() {
       const newFilters = prev.includes(filter)
         ? prev.filter(f => f !== filter)
         : [...prev, filter];
-      setPage(1);
       return newFilters;
     });
+    setPage(1);
   }, []);
 
   const loadMore = useCallback(() => {
-    if (!isLoading && hasMore && !error) {
+    if (!isLoading && hasMore) {
       setPage(prev => prev + 1);
     }
-  }, [isLoading, hasMore, error]);
+  }, [isLoading, hasMore]);
 
   return {
     query,
