@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { University } from './types';
 import { searchUniversities } from './api';
+import { useDebounce } from './useDebounce';
 
 export function useUniversitySearch() {
   const [query, setQuery] = useState('');
@@ -11,11 +12,20 @@ export function useUniversitySearch() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
+  const debouncedQuery = useDebounce(query, 300);
+
   const fetchResults = useCallback(async () => {
+    if (!debouncedQuery && selectedFilters.length === 0 && page === 1) {
+      setResults([]);
+      setHasMore(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
-      const data = await searchUniversities(query, selectedFilters, page);
+      
+      const data = await searchUniversities(debouncedQuery, selectedFilters, page);
       
       if (page === 1) {
         setResults(data);
@@ -25,13 +35,13 @@ export function useUniversitySearch() {
       
       setHasMore(data.length === 10);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
+      setError(error instanceof Error ? error.message : 'An error occurred while searching');
       setResults([]);
       setHasMore(false);
     } finally {
       setIsLoading(false);
     }
-  }, [query, selectedFilters, page]);
+  }, [debouncedQuery, selectedFilters, page]);
 
   useEffect(() => {
     fetchResults();
@@ -49,7 +59,6 @@ export function useUniversitySearch() {
         ? prev.filter(f => f !== filter)
         : [...prev, filter];
       setPage(1);
-      setError(null);
       return newFilters;
     });
   }, []);

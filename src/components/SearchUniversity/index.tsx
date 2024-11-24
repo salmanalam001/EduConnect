@@ -63,7 +63,7 @@ export default function SearchUniversity() {
           </div>
         )}
 
-        {!error && !isLoading && results.length > 0 && (
+        {!error && results.length > 0 && (
           <div className="grid gap-6">
             {results.map((university) => (
               <UniversityCard 

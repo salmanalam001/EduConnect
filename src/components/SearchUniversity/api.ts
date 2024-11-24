@@ -1,18 +1,36 @@
 import axios from 'axios';
+import Fuse from 'fuse.js';
 import { ApiUniversity, University } from './types';
 
-const API_URL = 'https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json';
+// Cache universities data
+let universitiesCache: University[] | null = null;
+let fuseInstance: Fuse<University> | null = null;
 
-let cachedUniversities: University[] | null = null;
+const FUSE_OPTIONS = {
+  keys: ['name', 'country', 'stateProvince', 'domains'],
+  threshold: 0.3,
+  includeScore: true,
+  minMatchCharLength: 2
+};
 
-export async function fetchUniversities(): Promise<University[]> {
-  if (cachedUniversities) return cachedUniversities;
-
+async function fetchAndCacheUniversities(): Promise<University[]> {
   try {
-    const response = await axios.get<ApiUniversity[]>(API_URL);
-    
-    cachedUniversities = response.data.map((uni) => ({
-      id: `${uni.name}-${uni.alpha_two_code}`.toLowerCase().replace(/\s+/g, '-'),
+    const response = await axios.get<ApiUniversity[]>(
+      'https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json',
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      }
+    );
+
+    if (!Array.isArray(response.data)) {
+      throw new Error('Invalid API response format');
+    }
+
+    universitiesCache = response.data.map((uni) => ({
+      id: `${uni.name}-${uni.alpha_two_code}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       name: uni.name,
       country: uni.country,
       stateProvince: uni['state-province'],
@@ -21,10 +39,11 @@ export async function fetchUniversities(): Promise<University[]> {
       alphaTwoCode: uni.alpha_two_code
     }));
 
-    return cachedUniversities;
+    fuseInstance = new Fuse(universitiesCache, FUSE_OPTIONS);
+    return universitiesCache;
   } catch (error) {
     console.error('Error fetching universities:', error);
-    throw new Error('Failed to fetch universities');
+    throw new Error('Failed to fetch universities data. Please try again later.');
   }
 }
 
@@ -35,33 +54,38 @@ export async function searchUniversities(
   limit: number = 10
 ): Promise<University[]> {
   try {
-    const allUniversities = await fetchUniversities();
-    let filtered = allUniversities;
+    // Fetch and cache universities if not already cached
+    if (!universitiesCache) {
+      await fetchAndCacheUniversities();
+    }
 
-    // Apply search query
+    if (!universitiesCache) {
+      throw new Error('Failed to load universities data');
+    }
+
+    let results = universitiesCache;
+
+    // Apply search if query exists
     if (query.trim()) {
-      const searchQuery = query.toLowerCase();
-      filtered = filtered.filter(uni => 
-        uni.name.toLowerCase().includes(searchQuery) ||
-        uni.country.toLowerCase().includes(searchQuery) ||
-        uni.domains.some(domain => domain.toLowerCase().includes(searchQuery))
-      );
+      if (!fuseInstance) {
+        fuseInstance = new Fuse(universitiesCache, FUSE_OPTIONS);
+      }
+      const searchResults = fuseInstance.search(query);
+      results = searchResults.map(result => result.item);
     }
 
     // Apply country filters
     if (filters.length > 0) {
-      filtered = filtered.filter(uni =>
-        filters.some(filter => uni.country === filter)
-      );
+      results = results.filter(uni => filters.includes(uni.country));
     }
 
     // Apply pagination
-    const start = (page - 1) * limit;
-    const end = start + limit;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
     
-    return filtered.slice(start, end);
+    return results.slice(startIndex, endIndex);
   } catch (error) {
-    console.error('Error searching universities:', error);
-    throw new Error('Failed to search universities');
+    console.error('Search error:', error);
+    throw error instanceof Error ? error : new Error('An unexpected error occurred');
   }
 }
