@@ -3,20 +3,20 @@ import SearchBar from './SearchBar';
 import FilterBar from './FilterBar';
 import UniversityCard from './UniversityCard';
 import { useUniversitySearch } from './useUniversitySearch';
-import { useInView } from 'react-intersection-observer';
-import { AlertCircle, School } from 'lucide-react';
+import { School, AlertCircle } from 'lucide-react';
 
+// Dynamic filters based on most common countries in the dataset
 const filters = [
-  'India',
   'United States',
+  'India',
   'United Kingdom',
   'Canada',
   'Australia',
   'Germany',
   'France',
   'Spain',
-  'Italy',
-  'Japan'
+  'Brazil',
+  'China'
 ];
 
 export default function SearchUniversity() {
@@ -26,19 +26,11 @@ export default function SearchUniversity() {
     results,
     isLoading,
     error,
-    hasMore,
     handleSearch,
-    handleFilterToggle,
-    loadMore
+    handleFilterToggle
   } = useUniversitySearch();
 
-  const { ref } = useInView({
-    onChange: (inView) => {
-      if (inView && hasMore && !isLoading) {
-        loadMore();
-      }
-    },
-  });
+  const displayResults = results.slice(0, 50); // Limit display to first 50 results for better performance
 
   return (
     <div className="max-w-4xl mx-auto px-4">
@@ -48,7 +40,7 @@ export default function SearchUniversity() {
             <School className="h-8 w-8 text-indigo-600 mr-2" />
             <h2 className="text-2xl font-bold text-gray-900">University Search</h2>
           </div>
-          <p className="text-gray-600">Find universities worldwide by name, country, or domain</p>
+          <p className="text-gray-600">Search from thousands of universities worldwide</p>
         </div>
 
         <SearchBar 
@@ -71,32 +63,38 @@ export default function SearchUniversity() {
           </div>
         )}
 
-        {!error && results.length > 0 && (
-          <div className="grid gap-6">
-            {results.map((university) => (
-              <UniversityCard 
-                key={university.id}
-                university={university}
-              />
-            ))}
-          </div>
-        )}
-
-        {isLoading && (
+        {isLoading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
+        ) : (
+          <>
+            {results.length > 0 ? (
+              <>
+                <div className="text-sm text-gray-600 mb-4">
+                  Found {results.length} universities
+                  {results.length > 50 && ' (showing first 50)'}
+                </div>
+                <div className="grid gap-6">
+                  {displayResults.map((university) => (
+                    <UniversityCard 
+                      key={university.id}
+                      university={university}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              query || selectedFilters.length > 0 ? (
+                <div className="text-center py-12">
+                  <School className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 text-lg">No universities found matching your criteria.</p>
+                  <p className="text-gray-500 mt-2">Try adjusting your search terms or filters.</p>
+                </div>
+              ) : null
+            )}
+          </>
         )}
-
-        {!error && !isLoading && results.length === 0 && (query || selectedFilters.length > 0) && (
-          <div className="text-center py-12">
-            <School className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg">No universities found matching your criteria.</p>
-            <p className="text-gray-500 mt-2">Try adjusting your search terms or filters.</p>
-          </div>
-        )}
-
-        {hasMore && <div ref={ref} className="h-10" />}
       </div>
     </div>
   );

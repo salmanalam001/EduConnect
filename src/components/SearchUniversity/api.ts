@@ -1,23 +1,8 @@
-import { ApiUniversity, University } from './types';
+import { University, ApiUniversity } from './types';
 
 let universitiesCache: University[] | null = null;
 
-function normalizeText(text: string): string {
-  return text.toLowerCase().trim();
-}
-
-function searchInText(searchText: string, targetText: string): boolean {
-  const normalizedSearch = normalizeText(searchText);
-  const normalizedTarget = normalizeText(targetText);
-  return normalizedTarget.includes(normalizedSearch);
-}
-
-export async function searchUniversities(
-  query: string,
-  filters: string[],
-  page: number = 1,
-  limit: number = 10
-): Promise<University[]> {
+export async function searchUniversities(query: string, filters: string[]): Promise<University[]> {
   try {
     if (!universitiesCache) {
       const response = await fetch('/world_universities_and_domains.json');
@@ -26,26 +11,33 @@ export async function searchUniversities(
       }
       const data: ApiUniversity[] = await response.json();
       
-      universitiesCache = data.map((uni) => ({
-        id: `${uni.name}-${uni.alpha_two_code}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        name: uni.name,
-        country: uni.country,
-        stateProvince: uni['state-province'],
-        webPages: uni.web_pages,
-        domains: uni.domains,
-        alphaTwoCode: uni.alpha_two_code
-      }));
+      // Normalize and clean the data
+      universitiesCache = data
+        .filter(uni => uni.name && uni.country) // Filter out invalid entries
+        .map((uni) => ({
+          id: `${uni.name}-${uni.alpha_two_code}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          name: uni.name.trim(),
+          country: uni.country.trim(),
+          stateProvince: uni['state-province'] ? uni['state-province'].trim() : null,
+          webPages: uni.web_pages.filter(url => url && url.trim()),
+          domains: uni.domains.filter(domain => domain && domain.trim()),
+          alphaTwoCode: uni.alpha_two_code.trim()
+        }));
     }
 
     let results = [...universitiesCache];
 
     // Apply search query
     if (query.trim()) {
+      const searchTerms = query.toLowerCase().trim().split(/\s+/);
       results = results.filter(uni => 
-        searchInText(query, uni.name) ||
-        searchInText(query, uni.country) ||
-        (uni.stateProvince && searchInText(query, uni.stateProvince)) ||
-        uni.domains.some(domain => searchInText(query, domain))
+        searchTerms.every(term =>
+          uni.name.toLowerCase().includes(term) ||
+          uni.country.toLowerCase().includes(term) ||
+          (uni.stateProvince && uni.stateProvince.toLowerCase().includes(term)) ||
+          uni.domains.some(domain => domain.toLowerCase().includes(term)) ||
+          uni.alphaTwoCode.toLowerCase().includes(term)
+        )
       );
     }
 
@@ -54,14 +46,12 @@ export async function searchUniversities(
       results = results.filter(uni => filters.includes(uni.country));
     }
 
-    // Apply pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedResults = results.slice(startIndex, endIndex);
-    
-    return paginatedResults;
+    // Sort results by name
+    results.sort((a, b) => a.name.localeCompare(b.name));
+
+    return results;
   } catch (error) {
     console.error('Search error:', error);
-    throw error instanceof Error ? error : new Error('An unexpected error occurred');
+    throw new Error('Failed to load university data. Please try again later.');
   }
 }
