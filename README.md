@@ -138,7 +138,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support:
 - Email: contact@millat.tech
-- Join our [Discord community](https://discord.gg/educonnect)
 - Create an issue on GitHub
 
 ---
