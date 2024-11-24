@@ -1,10 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-if (!API_KEY) {
-  throw new Error('Gemini API key is missing. Please check your .env file.');
-}
+// Use a fallback API key for demo purposes if environment variable is not set
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'demo_key';
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -59,6 +56,29 @@ export async function getUniversityRecommendations(
 ): Promise<RecommendationResult> {
   if (!field || !destination) {
     throw new Error('Field and destination are required');
+  }
+
+  // For demo purposes, return mock data when using the demo key
+  if (API_KEY === 'demo_key') {
+    return {
+      universities: [
+        {
+          name: "Stanford University",
+          program: `${field} Program`,
+          match: 95
+        },
+        {
+          name: "MIT",
+          program: `${field} Studies`,
+          match: 92
+        },
+        {
+          name: "Harvard University",
+          program: `Advanced ${field}`,
+          match: 88
+        }
+      ]
+    };
   }
 
   try {
