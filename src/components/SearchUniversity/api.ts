@@ -1,90 +1,67 @@
 import axios from 'axios';
-import Fuse from 'fuse.js';
-import { University } from './types';
+import { ApiUniversity, University } from './types';
 
 const API_URL = 'https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json';
 
-let universities: University[] = [];
-let fuseSearch: Fuse<University>;
+let cachedUniversities: University[] | null = null;
 
-const fuseOptions = {
-  keys: ['name', 'country', 'domains'],
-  threshold: 0.3,
-  distance: 100
-};
-
-async function fetchUniversities() {
-  if (universities.length > 0) return universities;
+export async function fetchUniversities(): Promise<University[]> {
+  if (cachedUniversities) return cachedUniversities;
 
   try {
-    const response = await axios.get(API_URL);
-    universities = response.data.map((uni: any) => ({
-      id: uni.domains[0] || Math.random().toString(),
+    const response = await axios.get<ApiUniversity[]>(API_URL);
+    
+    cachedUniversities = response.data.map((uni) => ({
+      id: `${uni.name}-${uni.alpha_two_code}`.toLowerCase().replace(/\s+/g, '-'),
       name: uni.name,
       country: uni.country,
-      domains: uni.domains || [],
-      webPages: uni['web_pages'] || [],
-      alphaTwoCode: uni['alpha_two_code'],
       stateProvince: uni['state-province'],
-      ranking: Math.floor(Math.random() * 500) + 1,
-      image: `https://source.unsplash.com/400x300/?university,${uni.country.replace(/\s+/g, '')}`
+      webPages: uni.web_pages,
+      domains: uni.domains,
+      alphaTwoCode: uni.alpha_two_code
     }));
 
-    fuseSearch = new Fuse(universities, fuseOptions);
-    return universities;
+    return cachedUniversities;
   } catch (error) {
     console.error('Error fetching universities:', error);
-    return [];
+    throw new Error('Failed to fetch universities');
   }
 }
 
-export async function searchUniversities(query: string, filters: string[], page: number = 1, pageSize: number = 10): Promise<University[]> {
+export async function searchUniversities(
+  query: string,
+  filters: string[],
+  page: number = 1,
+  limit: number = 10
+): Promise<University[]> {
   try {
-    await fetchUniversities();
-    
-    let results = universities;
+    const allUniversities = await fetchUniversities();
+    let filtered = allUniversities;
 
-    // Apply search query using Fuse.js
+    // Apply search query
     if (query.trim()) {
-      const searchResults = fuseSearch.search(query);
-      results = searchResults.map(result => result.item);
+      const searchQuery = query.toLowerCase();
+      filtered = filtered.filter(uni => 
+        uni.name.toLowerCase().includes(searchQuery) ||
+        uni.country.toLowerCase().includes(searchQuery) ||
+        uni.domains.some(domain => domain.toLowerCase().includes(searchQuery))
+      );
     }
 
-    // Apply filters
+    // Apply country filters
     if (filters.length > 0) {
-      results = results.filter(uni => {
-        return filters.some(filter => {
-          if (filter === 'Top 100') return uni.ranking <= 100;
-          if (filter === 'Top 500') return uni.ranking <= 500;
-          return uni.country === filter;
-        });
-      });
+      filtered = filtered.filter(uni =>
+        filters.some(filter => uni.country === filter)
+      );
     }
 
     // Apply pagination
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    return results.slice(start, end);
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    
+    return filtered.slice(start, end);
   } catch (error) {
     console.error('Error searching universities:', error);
-    return [];
-  }
-}
-
-export async function getTopCountries(): Promise<string[]> {
-  try {
-    await fetchUniversities();
-    const countryCounts = universities.reduce((acc: { [key: string]: number }, uni) => {
-      acc[uni.country] = (acc[uni.country] || 0) + 1;
-      return acc;
-    }, {});
-
-    return Object.entries(countryCounts)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 10)
-      .map(([country]) => country);
-  } catch (error) {
-    console.error('Error getting top countries:', error);
-    return [];
+    throw new Error('Failed to search universities');
   }
 }

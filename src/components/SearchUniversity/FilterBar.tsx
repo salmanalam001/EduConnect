@@ -1,67 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { getTopCountries } from './api';
+import React from 'react';
 
 interface FilterBarProps {
+  filters: string[];
   selectedFilters: string[];
-  toggleFilter: (filter: string) => void;
+  onFilterToggle: (filter: string) => void;
 }
 
-export default function FilterBar({ selectedFilters, toggleFilter }: FilterBarProps) {
-  const [topCountries, setTopCountries] = useState<string[]>([]);
-
-  useEffect(() => {
-    const loadTopCountries = async () => {
-      try {
-        const countries = await getTopCountries();
-        setTopCountries(countries);
-      } catch (error) {
-        console.error('Error loading top countries:', error);
-      }
-    };
-    loadTopCountries();
-  }, []);
-
-  const rankingFilters = ['Top 100', 'Top 500'];
-
+export default function FilterBar({ filters, selectedFilters, onFilterToggle }: FilterBarProps) {
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Rankings</h3>
-        <div className="flex flex-wrap gap-2">
-          {rankingFilters.map((filter) => (
-            <button
-              key={filter}
-              onClick={() => toggleFilter(filter)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                selectedFilters.includes(filter)
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Top Countries</h3>
-        <div className="flex flex-wrap gap-2">
-          {topCountries.map((country) => (
-            <button
-              key={country}
-              onClick={() => toggleFilter(country)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                selectedFilters.includes(country)
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {country}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-3">
+      {filters.map((filter) => (
+        <button
+          key={filter}
+          onClick={() => onFilterToggle(filter)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${
+            selectedFilters.includes(filter)
+              ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-700'
+              : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600'
+          }`}
+        >
+          {filter}
+        </button>
+      ))}
     </div>
   );
 }

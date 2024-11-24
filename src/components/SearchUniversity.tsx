@@ -16,37 +16,46 @@ const universities: University[] = [
     name: 'Stanford University',
     country: 'United States',
     ranking: 2,
-    programs: ['Computer Science', 'Business Administration', 'Engineering', 'Data Science', 'Artificial Intelligence'],
+    programs: ['Computer Science', 'Business Administration', 'Engineering'],
     tuitionRange: '$55,000 - $65,000',
     acceptance: '4.8%',
     image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=300&fit=crop'
   },
   {
+    name: 'MIT',
+    country: 'United States',
+    ranking: 1,
+    programs: ['Computer Science', 'Engineering', 'Business'],
+    tuitionRange: '$53,000 - $62,000',
+    acceptance: '7.3%',
+    image: 'https://images.unsplash.com/photo-1564394256913-3b06c176695c?w=400&h=300&fit=crop'
+  },
+  {
     name: 'University of Oxford',
     country: 'United Kingdom',
     ranking: 1,
-    programs: ['Medicine', 'Law', 'Physics', 'Computer Science', 'Economics'],
+    programs: ['Medicine', 'Computer Science', 'Engineering'],
     tuitionRange: '£26,770 - £39,010',
     acceptance: '17.5%',
     image: 'https://images.unsplash.com/photo-1580537659466-0a9bfa916a54?w=400&h=300&fit=crop'
   },
   {
-    name: 'University of Toronto',
-    country: 'Canada',
-    ranking: 18,
-    programs: ['Psychology', 'Economics', 'Mathematics', 'Computer Engineering', 'Business'],
-    tuitionRange: 'CAD 45,900 - 65,280',
-    acceptance: '43%',
+    name: 'University of Cambridge',
+    country: 'United Kingdom',
+    ranking: 3,
+    programs: ['Medicine', 'Engineering', 'Business'],
+    tuitionRange: '£27,000 - £40,000',
+    acceptance: '21%',
     image: 'https://images.unsplash.com/photo-1569534403589-5a8e69fc40f1?w=400&h=300&fit=crop'
   },
   {
-    name: 'ETH Zurich',
-    country: 'Switzerland',
-    ranking: 9,
-    programs: ['Engineering', 'Architecture', 'Computer Science', 'Mathematics', 'Physics'],
-    tuitionRange: 'CHF 1,298 - 1,578',
-    acceptance: '27%',
-    image: 'https://images.unsplash.com/photo-1564394256913-3b06c176695c?w=400&h=300&fit=crop'
+    name: 'University of Toronto',
+    country: 'Canada',
+    ranking: 18,
+    programs: ['Medicine', 'Business', 'Computer Science'],
+    tuitionRange: 'CAD 45,900 - 65,280',
+    acceptance: '43%',
+    image: 'https://images.unsplash.com/photo-1569534403589-5a8e69fc40f1?w=400&h=300&fit=crop'
   }
 ];
 
@@ -70,13 +79,6 @@ export default function SearchUniversity() {
     setQuery(searchQuery);
     setIsLoading(true);
 
-    if (searchQuery.trim() === '' && selectedFilters.length === 0) {
-      setResults([]);
-      setIsLoading(false);
-      return;
-    }
-
-    // Simulate API delay
     setTimeout(() => {
       const filtered = universities.filter(uni => {
         const matchesQuery = searchQuery.trim() === '' || 
@@ -104,14 +106,17 @@ export default function SearchUniversity() {
         ? prev.filter(f => f !== filter)
         : [...prev, filter];
       
-      handleSearch(query);
-      return newFilters;
+      const updatedFilters = newFilters;
+      setTimeout(() => {
+        handleSearch(query);
+      }, 0);
+      return updatedFilters;
     });
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4">
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Search Input */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -133,15 +138,15 @@ export default function SearchUniversity() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {filters.map((filter) => (
             <button
               key={filter}
               onClick={() => toggleFilter(filter)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${
                 selectedFilters.includes(filter)
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-700'
+                  : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600'
               }`}
             >
               {filter}
@@ -157,12 +162,12 @@ export default function SearchUniversity() {
         )}
 
         {/* Results */}
-        {!isLoading && results.length > 0 && (
-          <div className="grid gap-4 mt-4">
+        {!isLoading && (results.length > 0 ? (
+          <div className="grid gap-6 mt-6">
             {results.map((uni, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="flex">
                   <div className="w-1/4 h-48">
@@ -193,10 +198,10 @@ export default function SearchUniversity() {
                         <span className="text-sm">Popular Programs:</span>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {uni.programs.slice(0, 3).map((program, idx) => (
+                        {uni.programs.map((program, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-1 text-xs bg-indigo-50 text-indigo-600 rounded-full"
+                            className="px-3 py-1 text-sm bg-indigo-50 text-indigo-600 rounded-lg font-medium"
                           >
                             {program}
                           </span>
@@ -213,14 +218,11 @@ export default function SearchUniversity() {
               </div>
             ))}
           </div>
-        )}
-
-        {/* No Results */}
-        {!isLoading && query && results.length === 0 && (
+        ) : query || selectedFilters.length > 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600">No universities found matching your criteria.</p>
           </div>
-        )}
+        ) : null)}
       </div>
     </div>
   );
