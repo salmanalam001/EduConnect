@@ -19,7 +19,7 @@ const universities: University[] = [
     programs: ['Computer Science', 'Business Administration', 'Engineering'],
     tuitionRange: '$55,000 - $65,000',
     acceptance: '4.8%',
-    image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1681782421891-5088f13466ec?w=400&h=300&fit=crop'
   },
   {
     name: 'MIT',
@@ -28,7 +28,7 @@ const universities: University[] = [
     programs: ['Computer Science', 'Engineering', 'Business'],
     tuitionRange: '$53,000 - $62,000',
     acceptance: '7.3%',
-    image: 'https://images.unsplash.com/photo-1564394256913-3b06c176695c?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1587908401327-648d15e7b73b?w=400&h=300&fit=crop'
   },
   {
     name: 'University of Oxford',
@@ -37,7 +37,7 @@ const universities: University[] = [
     programs: ['Medicine', 'Computer Science', 'Engineering'],
     tuitionRange: '£26,770 - £39,010',
     acceptance: '17.5%',
-    image: 'https://images.unsplash.com/photo-1580537659466-0a9bfa916a54?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1629992219172-09eefc9c4d0e?w=400&h=300&fit=crop'
   },
   {
     name: 'University of Cambridge',
@@ -46,7 +46,7 @@ const universities: University[] = [
     programs: ['Medicine', 'Engineering', 'Business'],
     tuitionRange: '£27,000 - £40,000',
     acceptance: '21%',
-    image: 'https://images.unsplash.com/photo-1569534403589-5a8e69fc40f1?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1627411437849-4bc5a9b9341d?w=400&h=300&fit=crop'
   },
   {
     name: 'University of Toronto',
@@ -55,7 +55,16 @@ const universities: University[] = [
     programs: ['Medicine', 'Business', 'Computer Science'],
     tuitionRange: 'CAD 45,900 - 65,280',
     acceptance: '43%',
-    image: 'https://images.unsplash.com/photo-1569534403589-5a8e69fc40f1?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop'
+  },
+  {
+    name: 'Sharda University',
+    country: 'India',
+    ranking: 1201,
+    programs: ['Computer Science', 'Business','Medicine','Engineering'],
+    tuitionRange: 'USD 4,000 - 20,500',
+    acceptance: '35%',
+    image: 'https://images.unsplash.com/20/cambridge.JPG?w=400&h=300&fit=crop'
   }
 ];
 
