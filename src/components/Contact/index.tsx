@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Toaster, toast } from 'sonner';
-import ContactForm from './Contact/ContactForm';
-import ContactInfo from './Contact/ContactInfo';
-import { submitContactForm } from '../lib/api';
-import type { ContactFormData } from './Contact/types';
+import ContactForm from './ContactForm';
+import ContactInfo from './ContactInfo';
+import { submitContactForm } from '../../lib/api';
+import type { ContactFormData } from './types';
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
