@@ -6,7 +6,7 @@ EduPath AI is a modern, AI-powered platform designed to help students navigate t
 
 ## 🌟 Features
 
-- **AI-Powered Recommendations**: Smart university and course matching based on student profiles
+- **AI-Powered Recommendations**: Smart university and course matching using Google's Gemini AI
 - **Interactive UI**: Beautiful, responsive design with smooth animations
 - **Personalized Dashboard**: Track applications and get tailored recommendations
 - **Real-time Support**: AI chatbot for instant assistance
@@ -25,6 +25,11 @@ cd EduPath-AI
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env
+# Add your Gemini API key to .env file
+# VITE_GEMINI_API_KEY=your_api_key_here
+
 # Start the development server
 npm run dev
 ```
@@ -35,6 +40,7 @@ npm run dev
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Build Tool**: Vite
+- **AI Integration**: Google Gemini AI
 - **Type Checking**: TypeScript
 - **Linting**: ESLint
 - **Code Formatting**: Prettier
@@ -44,52 +50,68 @@ npm run dev
 ```
 edupath-ai/
 ├── src/
-│   ├── components/        # React components
-│   ├── hooks/            # Custom React hooks
-│   ├── types/            # TypeScript type definitions
-│   ├── utils/            # Utility functions
-│   ├── App.tsx           # Main application component
-│   └── main.tsx          # Application entry point
-├── public/               # Static assets
+│   ├── components/
+│   │   ├── AiPreview.tsx        # AI recommendation component
+│   │   ├── AiService.ts         # Gemini AI integration
+│   │   ├── Contact.tsx          # Contact form component
+│   │   ├── Destinations.tsx     # Study destinations
+│   │   ├── Hero.tsx            # Landing hero section
+│   │   ├── Navbar.tsx          # Navigation component
+│   │   ├── RecommendationCard.tsx # University card component
+│   │   ├── SearchUniversity.tsx   # University search
+│   │   ├── Services.tsx        # Services section
+│   │   └── Testimonials.tsx    # Student testimonials
+│   ├── App.tsx                 # Main application component
+│   └── main.tsx               # Application entry point
+├── public/                    # Static assets
 └── ...config files
 ```
 
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### AI Integration
+
+The project uses Google's Gemini AI for university recommendations. To set up:
+
+1. Get an API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Add the API key to your `.env` file
+3. The AI service is configured in `src/components/AiService.ts`
+
 ## 🌐 Deployment
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm 7 or higher
+- Gemini API key
+
+### Building for Production
+
+```bash
+# Build the project
+npm run build
+
+# Preview production build
+npm run preview
+```
 
 ### Deploying to Netlify
 
 1. **Build Command**: `npm run build`
 2. **Publish Directory**: `dist`
-3. **Environment Variables**: None required
-
-#### Method 1: Deploy with Netlify CLI
-
-```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Login to Netlify
-netlify login
-
-# Initialize and deploy
-netlify init
-netlify deploy --prod
-```
-
-#### Method 2: Deploy via Netlify Dashboard
-
-1. Log in to [Netlify](https://app.netlify.com)
-2. Click "Add new site" > "Import an existing project"
-3. Connect to your Git provider
-4. Select your repository
-5. Configure build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-6. Click "Deploy site"
+3. **Environment Variables**: Add `VITE_GEMINI_API_KEY` in Netlify settings
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
+We welcome contributions! Please follow these steps:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -99,45 +121,23 @@ We welcome contributions! Here's how you can help:
 
 Please read our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-## 🗺️ Roadmap
-
-### Phase 1: Enhanced AI Integration
-- [ ] Integration with GPT-4 for more accurate recommendations
-- [ ] Advanced matching algorithms for university selection
-- [ ] Automated document analysis and feedback
-
-### Phase 2: Student Dashboard
-- [ ] Personal progress tracking
-- [ ] Document management system
-- [ ] Application timeline visualization
-- [ ] Integration with university application portals
-
-### Phase 3: Community Features
-- [ ] Student forums and discussion boards
-- [ ] Peer-to-peer mentoring system
-- [ ] Alumni network integration
-- [ ] Success story sharing platform
-
-### Phase 4: Advanced Features
-- [ ] Virtual campus tours using AR/VR
-- [ ] Live counseling sessions
-- [ ] Scholarship matching system
-- [ ] Visa application tracking
-- [ ] Cost calculator and financial planning tools
-
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- All the contributors who have helped shape EduPath AI
+- Google Gemini AI for powering our recommendations
+- All contributors who have helped shape EduPath AI
 - The amazing open-source community
 - Universities and educational institutions for their support
 
 ## 📞 Support
 
-For support, email contact@millat.tech or join our [Discord community](https://discord.gg/edupathglobal).
+For support:
+- Email: contact@millat.tech
+- Join our [Discord community](https://discord.gg/edupathglobal)
+- Create an issue on GitHub
 
 ---
 
