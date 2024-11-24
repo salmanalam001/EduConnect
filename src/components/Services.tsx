@@ -2,6 +2,7 @@ import React from 'react';
 import { Sparkles, GraduationCap, FileCheck, Calendar, MessageSquare, Plane } from 'lucide-react';
 import ServiceCard from './ServiceCard';
 import AiPreview from './AiPreview';
+import SearchUniversity from './SearchUniversity';
 
 export default function Services() {
   const services = [
@@ -47,6 +48,10 @@ export default function Services() {
           <p className="mt-4 text-xl text-gray-600">
             Comprehensive support for your international education journey
           </p>
+        </div>
+
+        <div className="mt-12">
+          <SearchUniversity />
         </div>
 
         <div className="mt-20">

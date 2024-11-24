@@ -11,6 +11,7 @@ EduPath AI is a modern, AI-powered platform designed to help students navigate t
 - **Personalized Dashboard**: Track applications and get tailored recommendations
 - **Real-time Support**: AI chatbot for instant assistance
 - **Comprehensive Resources**: Information about destinations, universities, and programs
+- **University Search**: Quick search functionality for universities, programs, and countries
 
 ## 🚀 Quick Start
 
@@ -52,6 +53,39 @@ edupath-ai/
 ├── public/               # Static assets
 └── ...config files
 ```
+
+## 🌐 Deployment
+
+### Deploying to Netlify
+
+1. **Build Command**: `npm run build`
+2. **Publish Directory**: `dist`
+3. **Environment Variables**: None required
+
+#### Method 1: Deploy with Netlify CLI
+
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Login to Netlify
+netlify login
+
+# Initialize and deploy
+netlify init
+netlify deploy --prod
+```
+
+#### Method 2: Deploy via Netlify Dashboard
+
+1. Log in to [Netlify](https://app.netlify.com)
+2. Click "Add new site" > "Import an existing project"
+3. Connect to your Git provider
+4. Select your repository
+5. Configure build settings:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+6. Click "Deploy site"
 
 ## 🤝 Contributing
 
