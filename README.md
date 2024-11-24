@@ -19,7 +19,7 @@ EduPath AI is a modern, AI-powered platform designed to help students navigate t
 git clone https://github.com/codermillat/EduPath-AI.git
 
 # Navigate to the project directory
-cd edupath-ai
+cd EduPath-AI
 
 # Install dependencies
 npm install
