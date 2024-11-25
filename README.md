@@ -19,7 +19,7 @@ Please visit our [EduConnect](https://edupath.netlify.app/) website.
 
 ```bash
 # Clone the repository
-git clone https://github.com/codermillat/EduConnect.git
+git clone https://github.com/salmanalam001/EduConnect.git
 
 # Navigate to the project directory
 cd EduConnect
@@ -134,12 +134,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - The amazing open-source community
 - Universities and educational institutions for their support
 
-## 📞 Support
-
-For support:
-- Email: contact@millat.tech
-- Create an issue on GitHub
-
----
 
 <p align="center">Made with ❤️ for international students</p>
